@@ -170,25 +170,26 @@ if __name__ == '__main__':
 
 """
 训练:
-python main.py --data-csv ./dataset/dataset_MHS_sampled_seed42.csv --spacy-lang en --pretrained glove.6B.300d --epochs 10 --lr 0.01 --batch-size 64 --val-batch-size 64 --kernel-height 3,4,5 --out-channel 100 --dropout 0.5 --num-class 2
+python main.py --data-csv ./dataset/dataset_MHS.csv --spacy-lang en --pretrained glove.6B.300d --epochs 10 --lr 0.01 --batch-size 64 --val-batch-size 64 --kernel-height 3,4,5 --out-channel 100 --dropout 0.5 --num-class 2
 =============================================
-Training finished! Loading best model for Test Set...
-Final Test Loss:       0.0035
-Accuracy:              90.78%
-F1_hate (Class 1):     90.21%
-F1_nothate (Class 0):  91.28%
-Macro_F1:              90.75%
+🚀 Training finished! Loading best model for Test Set...
+📌 Final Test Loss:       0.0151
+📊 Accuracy:              81.98%
+🔥 F1_hate (Class 1):     74.88%
+🕊️  F1_nothate (Class 0):  85.95%
+🌟 Macro_F1:              80.42%
 =============================================
+
 
 预测:
 直接运行test_model.py 
 =============================================
-Running Evaluation...
-New Dataset Loss:      0.0317
-Accuracy:              36.10%
-F1_hate (Class 1):     12.21%
-F1_nothate (Class 0):  49.77%
-Macro_F1:              30.99%
+🚀 Running Evaluation...
+📌 New Dataset Loss:      0.0686
+📊 Accuracy:              42.57%
+🔥 F1_hate (Class 1):     13.22%
+🕊️  F1_nothate (Class 0):  57.08%
+🌟 Macro_F1:              35.15%
 =============================================
 
 """
