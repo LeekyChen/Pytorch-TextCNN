@@ -7,7 +7,7 @@ Created on Sat Sep 14 17:50:00 2019
 
 #try to use nn for crossentropy
 
-from sklearn.metrics import f1_score, accuracy_score
+from sklearn.metrics import f1_score, accuracy_score, precision_score, recall_score, confusion_matrix
 import torch
 import torch.nn.functional as F
 
@@ -68,7 +68,7 @@ def test(m, device, test_itr):
     all_preds = []
     all_targets = []
 
-    with torch.no_grad(): # 🔥 规范做法，测试时不计算梯度
+    with torch.no_grad():
         for batch in test_itr:
             text, target = batch.text, batch.label
             text = torch.transpose(text, 0, 1)
@@ -89,18 +89,25 @@ def test(m, device, test_itr):
     size = len(test_itr.dataset)
     test_loss /= size
 
-    # 🔥 1. 计算 Accuracy (乘以 100 转为百分比)
-    accuracy = accuracy_score(all_targets, all_preds) * 100.0
+    # 1. 计算 Accuracy
+    accuracy = accuracy_score(all_targets, all_preds)
 
-    # 🔥 2. 计算每个单独类别的 F1
-    # average=None 会严格按照标签索引 [0, 1] 的顺序返回一个数组
-    # 因为我们已经确认了 0 是 not_hate, 1 是 hate：
+    # 2. 计算每个单独类别的 F1
     class_f1_scores = f1_score(all_targets, all_preds, average=None, labels=[0, 1])
-    f1_nothate = class_f1_scores[0] * 100.0  # 索引 0
-    f1_hate = class_f1_scores[1] * 100.0     # 索引 1
+    f1_nothate = class_f1_scores[0]  # 索引 0
+    f1_hate = class_f1_scores[1]     # 索引 1
 
-    # 🔥 3. 计算 Macro F1 (两类 F1 的宏平均)
-    macro_f1 = f1_score(all_targets, all_preds, average='macro') * 100.0
+    # 3. 计算 Macro F1
+    macro_f1 = f1_score(all_targets, all_preds, average='macro')
 
-    # 将 5 个指标一起返回给主程序
-    return test_loss, accuracy, f1_hate, f1_nothate, macro_f1
+    # 【新增】4. 计算 Precision & Recall (默认关注类别 1: hate)
+    precision = precision_score(all_targets, all_preds, pos_label=1, zero_division=0)
+    recall = recall_score(all_targets, all_preds, pos_label=1, zero_division=0)
+
+    # 【新增】5. 通过混淆矩阵计算 FPR (False Positive Rate)
+    # confusion_matrix 结构: [[TN, FP], [FN, TP]]
+    tn, fp, fn, tp = confusion_matrix(all_targets, all_preds, labels=[0, 1]).ravel()
+    fpr = (fp / (fp + tn)) if (fp + tn) > 0 else 0.0
+
+    # 【修改处】将所有 7 个指标和 loss 按顺序返回（共 8 个变量）
+    return test_loss, accuracy, f1_hate, f1_nothate, macro_f1, precision, recall, fpr

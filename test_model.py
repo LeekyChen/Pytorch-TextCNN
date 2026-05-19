@@ -16,7 +16,7 @@ def main():
     # 核心路径参数
     parser.add_argument("--dataset_path", type=str,
                         help="需要测试的新数据集CSV路径",
-                        default=r"./dataset/dataset_Davidson_sampled_seed42.csv")
+                        default=r"./dataset/dataset_implicit.csv")
     parser.add_argument("--model_path", type=str, default="best_validation",
                         help="训练好的模型权重路径")
     parser.add_argument("--vocab_path", type=str, default="text_vocab.pt",
@@ -89,13 +89,16 @@ def main():
     print("\n" + "=" * 45)
     print("🚀 Running Evaluation...")
     # 调用你刚才在 training.py 里写好的豪华版 test 方法
-    final_loss, final_acc, f1_hate, f1_nothate, macro_f1 = training.test(m, device, new_data_iter)
+    final_loss, final_acc, f1_hate, f1_nothate, macro_f1, precision, recall, fpr = training.test(m, device, new_data_iter)
 
-    print(f"📌 New Dataset Loss:      {final_loss:.4f}")
-    print(f"📊 Accuracy:              {final_acc:.2f}%")
-    print(f"🔥 F1_hate (Class 1):     {f1_hate:.2f}%")
-    print(f"🕊️  F1_nothate (Class 0):  {f1_nothate:.2f}%")
-    print(f"🌟 Macro_F1:              {macro_f1:.2f}%")
+    print(f"📌 Final Test Loss:       {final_loss}")
+    print(f"📊 Accuracy:              {final_acc}")
+    print(f"🎯 Precision:             {precision}")
+    print(f"📞 Recall:                {recall}")
+    print(f"🔥 F1_hate (Class 1):     {f1_hate}")
+    print(f"🕊️  F1_nothate (Class 0):  {f1_nothate}")
+    print(f"🌟 Macro_F1:              {macro_f1}")
+    print(f"⚠️  FPR (False Positive):  {fpr}")
     print("=" * 45 + "\n")
 
 

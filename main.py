@@ -40,7 +40,7 @@ def main():
     parser.add_argument('--epochs', type=int, default=10,
                         help='number of epochs to train (default: 10)')
     
-    parser.add_argument('--lr', type=float, default=0.001,
+    parser.add_argument('--lr', type=float, default=0.01,
                         help='learning rate (default: 0.01)')
     
     parser.add_argument('--momentum', type=float, default=0.9,
@@ -130,13 +130,16 @@ def main():
     m.load_state_dict(torch.load("best_validation"))
 
     # 调用我们刚刚重写的 test 方法
-    final_loss, final_acc, f1_hate, f1_nothate, macro_f1 = training.test(m, device, test_iter)
+    final_loss, final_acc, f1_hate, f1_nothate, macro_f1, precision, recall, fpr = training.test(m, device, test_iter)
 
-    print(f"📌 Final Test Loss:       {final_loss:.4f}")
-    print(f"📊 Accuracy:              {final_acc:.2f}%")
-    print(f"🔥 F1_hate (Class 1):     {f1_hate:.2f}%")
-    print(f"🕊️  F1_nothate (Class 0):  {f1_nothate:.2f}%")
-    print(f"🌟 Macro_F1:              {macro_f1:.2f}%")
+    print(f"📌 Final Test Loss:       {final_loss}")
+    print(f"📊 Accuracy:              {final_acc}")
+    print(f"🎯 Precision:             {precision}")
+    print(f"📞 Recall:                {recall}")
+    print(f"🔥 F1_hate (Class 1):     {f1_hate}")
+    print(f"🕊️  F1_nothate (Class 0):  {f1_nothate}")
+    print(f"🌟 Macro_F1:              {macro_f1}")
+    print(f"⚠️  FPR (False Positive):  {fpr}")
     print("=" * 45 + "\n")
 
     
@@ -170,31 +173,63 @@ if __name__ == '__main__':
 
 """
 训练:
-python main.py --data-csv ./dataset/dataset_MHS.csv --spacy-lang en --pretrained glove.6B.300d --epochs 10 --lr 0.01 --batch-size 64 --val-batch-size 64 --kernel-height 3,4,5 --out-channel 100 --dropout 0.5 --num-class 2
+python main.py --data-csv ./dataset/dataset_MHS.csv
 =============================================
 🚀 Training finished! Loading best model for Test Set...
-📌 Final Test Loss:       0.0151
-📊 Accuracy:              81.98%
-🔥 F1_hate (Class 1):     74.88%
-🕊️  F1_nothate (Class 0):  85.95%
-🌟 Macro_F1:              80.42%
+📌 Final Test Loss:       0.030649544493570588
+📊 Accuracy:              0.8183996166746527
+🎯 Precision:             0.7998472116119175
+📞 Recall:                0.6785482825664291
+🔥 F1_hate (Class 1):     0.7342215988779803
+🕊️  F1_nothate (Class 0):  0.8620815138282387
+🌟 Macro_F1:              0.7981515563531095
+⚠️  FPR (False Positive):  0.09958190801976435
 =============================================
 
 
 预测:
 直接运行test_model.py 
+Davidson:
 =============================================
 🚀 Running Evaluation...
-📌 New Dataset Loss:      0.0686
-📊 Accuracy:              42.57%
-🔥 F1_hate (Class 1):     13.22%
-🕊️  F1_nothate (Class 0):  57.08%
-🌟 Macro_F1:              35.15%
+📌 Final Test Loss:       0.050301657515051286
+📊 Accuracy:              0.7418201323082424
+🎯 Precision:             0.49645390070921985
+📞 Recall:                0.6853146853146853
+🔥 F1_hate (Class 1):     0.5757931844888367
+🕊️  F1_nothate (Class 0):  0.8144435877666409
+🌟 Macro_F1:              0.6951183861277388
+⚠️  FPR (False Positive):  0.23877011770357914
+=============================================
+
+CHSD
+=============================================
+🚀 Running Evaluation...
+📌 Final Test Loss:       0.04649527849753698
+📊 Accuracy:              0.5828333333333333
+🎯 Precision:             0.46994535519125685
+📞 Recall:                0.03451043338683788
+🔥 F1_hate (Class 1):     0.06429906542056076
+🕊️  F1_nothate (Class 0):  0.7315817694369974
+🌟 Macro_F1:              0.39794041742877906
+⚠️  FPR (False Positive):  0.02765108323831243
+=============================================
+
+
+implicit:
+=============================================
+🚀 Running Evaluation...
+📌 Final Test Loss:       0.06831517901023229
+📊 Accuracy:              0.6531666666666667
+🎯 Precision:             0.5048899755501223
+📞 Recall:                0.1977022498803255
+🔥 F1_hate (Class 1):     0.2841417268661851
+🕊️  F1_nothate (Class 0):  0.7711426371934456
+🌟 Macro_F1:              0.5276421820298154
+⚠️  FPR (False Positive):  0.10355407824085912
 =============================================
 
 """
-
-# python main.py --data-csv ./Davidson_Korean_sample.csv --spacy-lang korean --pretrained glove.6B.300d --epochs 10 --lr 0.01 --batch-size 64 --val-batch-size 64 --kernel-height 3,4,5 --out-channel 100 --dropout 0.5 --num-class 2
 
 # 效果只能说很拉。。。我猜是分词器的锅
 
